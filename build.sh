@@ -21,4 +21,4 @@ emcc ${TADSDIR}bifgdum.c ${TADSDIR}osgen3.c ${TADSDIR}os0.c ${TADSDIR}osnoui.c $
 emcc obj/cmnrun.o obj/run.o obj/char.o -I${TADSUNIXDIR} -I${TADSDIR}  -o obj/tr.o  ${CCOPTS}
 
 
-emcc obj/tr.o -o bin/lib/tr.js -s EXPORTED_FUNCTIONS="['_tads_worker_main']" --js-library ${TADSES6}/tadsthunk.js ${LDOPTS}
+emcc obj/tr.o -o bin/lib/tr.js -s EXPORTED_FUNCTIONS="['_tads_worker_main']" -s EXTRA_EXPORTED_RUNTIME_METHODS="['cwrap']" --js-library ${TADSES6}/tadsthunk.js ${LDOPTS}
