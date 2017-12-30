@@ -4,8 +4,9 @@ TADSUNIXDIR=tadsunix/
 TADSES6=tads2es6/
 #EMCC_AUTODEBUG=1
 #CCOPTS=-s ASSERTIONS=1 -s SAFE_HEAP=1 --profiling-funcs -O2 
-CCOPTS="-s ASSERTIONS=1 -s SAFE_HEAP=1 --profiling-funcs -DOSANSI -DUSE_HTML -DUNIX -DHAVE_STRCASECMP"
-LDOPTS="-s ASSERTIONS=1 -s SAFE_HEAP=1 --profiling-funcs"
+OPT_LEVEL=1
+CCOPTS="-s ASSERTIONS=1 -s SAFE_HEAP=1 --profiling-funcs -DOSANSI -DUSE_HTML -DUNIX -DHAVE_STRCASECMP -O${OPT_LEVEL}"
+LDOPTS="-s ASSERTIONS=1 -s SAFE_HEAP=1 --profiling-funcs -O${OPT_LEVEL}"
 
 mkdir -p obj
 emcc ${TADSDIR}ler.c -I${TADSDIR} -I${TADSUNIXDIR}  -o obj/lib.o ${CCOPTS}
