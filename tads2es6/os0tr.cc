@@ -433,7 +433,7 @@ osfildef *osfoprwtt(char *fname, int typ)
 /* open binary file for writing; returns NULL on error */
 osfildef *osfopwb(char *fname, int typ)
 {
-	if (typ == OSFTSAVE && strcmp(fname, "?save1.sav") == 0)
+	if (typ == OSFTSAVE)
 	{
 		// Special handling of saving a game
 		int id = js_openTempFileForWriting(fname);

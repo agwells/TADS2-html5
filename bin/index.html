@@ -134,18 +134,11 @@
 					}
 					break;
 				case 'transferfile':
-					if (e.data.name == '?save1.sav') 
-					{
-						var saveLink = document.createElement('a');
-						var blob = new Blob([e.data.contents], {type:'application/x-tads-save'});
-						saveLink.href = URL.createObjectURL(blob);
-						saveLink.download = 'tads2SaveGame.sav';
-						saveLink.click();
-					}
-					else
-					{
-						console.log("We've been asked to save a file, but we don't know why");
-					}
+					var saveLink = document.createElement('a');
+					var blob = new Blob([e.data.contents], {type:'application/x-tads-save'});
+					saveLink.href = URL.createObjectURL(blob);
+					saveLink.download = e.data.name;
+					saveLink.click();
 					wakeTadsWorker();
 					break;
 				case 'start_html':
