@@ -212,10 +212,15 @@ HtmlLexer.prototype.reconstructOpeningTag = function(name, attribs) {
 	return tag;
 };
 
+var TADS_OUTPUT_STATUS = {
+	MAIN: 0,
+	STATUSBAR: 1,
+}
+
 // Code for managing the view (i.e. text output etc)
 function TadsView(transcriptElement, statusLineElement)
 {
-	this.outputStatus = 0;
+	this.outputStatus = TADS_OUTPUT_STATUS.MAIN;
 	this.transcript = transcriptElement;
 	this.statusLine = statusLineElement;
 	this.isHtmlMode = false;
@@ -224,6 +229,8 @@ function TadsView(transcriptElement, statusLineElement)
 	this.plainTranscriptDiv = null;  
 	this.plainStatusLineDiv = null; 
 	this.resources = {};
+	this.transcriptContent = [];
+	this.transcriptMaxLength = 200;
 }
 
 // Makes the tads viewer aware of some resources that have 
@@ -363,17 +370,23 @@ TadsView.prototype.parseHtmlInto = function(str, element)
 	}
 	
 	// Put everything we have into the document.
-	element.appendChild(this.stringHtmlToDocumentFragment(processedHtml));
+	return this.transcriptContent.push(
+		element.appendChild(
+			this.stringHtmlToDocumentFragment(
+				processedHtml
+			)
+		)
+	);
 }
 
 TadsView.prototype.forceBufferedOutputFlush = function() {
 	var str = this.bufferedOutput;
 	this.bufferedOutput = "";
-	if (this.outputStatus == 0)
+	if (this.outputStatus == TADS_OUTPUT_STATUS.MAIN)
 	{
 		if (this.isHtmlMode)
 		{
-			this.parseHtmlInto(str, this.transcript);
+			var length = this.parseHtmlInto(str, this.transcript);
 		}
 		else
 		{
@@ -383,12 +396,28 @@ TadsView.prototype.forceBufferedOutputFlush = function() {
 				this.plainTranscriptDiv.style.whiteSpace = 'pre-wrap';
 				this.transcript.appendChild(this.plainTranscriptDiv);
 			}
-			this.plainTranscriptDiv.appendChild(document.createTextNode(str));
+			var length = this.transcriptContent.push(
+				this.plainTranscriptDiv.appendChild(
+					document.createTextNode(str)
+				)
+			);
 		}
+
+		if (length > this.transcriptMaxLength) {
+			var removeThisNode = this.transcriptContent.shift();
+			var parentNode = removeThisNode.parentNode;
+			if (parentNode) {
+				parentNode.removeChild(removeThisNode);
+				if (!parentNode.hasChildNodes() && parentNode.parentNode) {
+					parentNode.parentNode.removeChild(parentNode);
+				}
+			}
+		}
+
 		// Scroll to bottom
 		//document.body.scrollTop = document.body.scrollHeight;
 	}
-	else if (this.outputStatus == 1)
+	else if (this.outputStatus == TADS_OUTPUT_STATUS.STATUSBAR)
 	{
 		if (this.isHtmlMode)
 		{
